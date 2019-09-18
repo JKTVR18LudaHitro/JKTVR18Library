@@ -24,16 +24,35 @@ import java.util.logging.Logger;
  * @author Melnikov
  */
 public class SaverToFile {
-    private FileOutputStream fos = null;
-    private ObjectOutputStream oos = null;
+    private FileOutputStream fos = null;//память не выделена, только название
+    private ObjectOutputStream oos = null;//сохраняет обьект, обертка fos
     FileInputStream fileInputStream = null;
     ObjectInputStream objectInputStream = null;
     
     public void saveBooks(List<Book> listBooks){
         try {
-            fos = new FileOutputStream("Books.txt");
+            fos = new FileOutputStream("Books.txt");//aссоциируем с файлом
             oos = new ObjectOutputStream(fos);
-            oos.writeObject(listBooks);
+            oos.writeObject(listBooks);//передаем лист и выдаем возможные ошибки
+            oos.flush();//запись
+        } catch (FileNotFoundException ex) {
+            System.out.println("Файл не найден. Ошибка: " + ex);//обрабатываем ошибки
+        } catch (IOException ex) {
+            System.out.println("Ошибка ввода/вывода. Ошибка: " + ex);
+        }finally {//выполняется в любом случае, предназначен для освобождения ресурсов, памяти
+            try {
+                oos.close();
+                fos.close();//уничтожаем память, связь прекращаем
+            } catch (IOException ex) {
+                System.out.println("Ресурсы освободить не удалось: "+ex);
+            }
+        }
+    }
+    public void saveReaders(List<Reader> listReaders){
+         try {
+        fos = new FileOutputStream("Readers.txt");
+            oos = new ObjectOutputStream(fos);
+            oos.writeObject(listReaders);
             oos.flush();
         } catch (FileNotFoundException ex) {
             System.out.println("Файл не найден. Ошибка: " + ex);
@@ -48,10 +67,26 @@ public class SaverToFile {
             }
         }
     }
-    public void saveReaders(List<Reader> listReaders){
         
-    }
+    
     public void saveHistories(List<History> listHistories){
+         try {
+            fos = new FileOutputStream("Histories.txt");//aссоциируем с файлом
+            oos = new ObjectOutputStream(fos);
+            oos.writeObject(listHistories);//передаем лист и выдаем возможные ошибки
+            oos.flush();//запись
+        } catch (FileNotFoundException ex) {
+            System.out.println("Файл не найден. Ошибка: " + ex);//обрабатываем ошибки
+        } catch (IOException ex) {
+            System.out.println("Ошибка ввода/вывода. Ошибка: " + ex);
+        }finally {//выполняется в любом случае, предназначен для освобождения ресурсов, памяти
+            try {
+                oos.close();
+                fos.close();//уничтожаем память, связь прекращаем
+            } catch (IOException ex) {
+                System.out.println("Ресурсы освободить не удалось: "+ex);
+            }
+        }
         
     }
     
@@ -81,10 +116,56 @@ public class SaverToFile {
         }
         return listBooks;
     }
-    public List<Reader> loadListReaders(){
-        return null;
+    public List<Reader> loadListReaders(){//при запуске программы
+        List<Reader> listReaders = new ArrayList<>();
+        try {
+            fileInputStream = new FileInputStream("Readers.txt");
+            objectInputStream = new ObjectInputStream(fileInputStream);
+            listReaders =(List<Reader>) objectInputStream.readObject();
+        } catch (FileNotFoundException ex) {
+            System.out.println("Файл не найден. Ошибка: "+ ex);
+        } catch (IOException ex) {
+            System.out.println("Файл не прочитан. Ошибка: "+ ex);
+        } catch (ClassNotFoundException ex) {
+            System.out.println("Не найден класс: "+ ex);
+        } finally {
+            try {
+               if(fileInputStream != null){
+                  fileInputStream.close();
+               }
+               if(objectInputStream !=null){
+                  objectInputStream.close();
+               }
+            } catch (IOException ex) {
+               System.out.println("Ресурсы освободить не удалось: "+ex);
+            }
+        }
+        return listReaders;
     }
     public List<History> loadListHistories(){
-        return null;
+        List<History> listHistories = new ArrayList<>();
+        try {
+            fileInputStream = new FileInputStream("Readers.txt");
+            objectInputStream = new ObjectInputStream(fileInputStream);
+            listHistories =(List<History>) objectInputStream.readObject();
+        } catch (FileNotFoundException ex) {
+            System.out.println("Файл не найден. Ошибка: "+ ex);
+        } catch (IOException ex) {
+            System.out.println("Файл не прочитан. Ошибка: "+ ex);
+        } catch (ClassNotFoundException ex) {
+            System.out.println("Не найден класс: "+ ex);
+        } finally {
+            try {
+               if(fileInputStream != null){
+                  fileInputStream.close();
+               }
+               if(objectInputStream !=null){
+                  objectInputStream.close();
+               }
+            } catch (IOException ex) {
+               System.out.println("Ресурсы освободить не удалось: "+ex);
+            }
+        }
+        return listHistories;
     }
 }

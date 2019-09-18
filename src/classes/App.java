@@ -20,10 +20,14 @@ import java.util.Scanner;
  */
 public class App {
     List<Book> listBooks = new ArrayList<>();
+    List<Reader> listReaders = new ArrayList<>();
     SaverToFile saverToFile = new SaverToFile();
+    List<History> listHistories = new ArrayList<>();
     
     public App() {
         listBooks.addAll(saverToFile.loadListBooks());
+        listReaders.addAll(saverToFile.loadListReaders());
+        listHistories.addAll(saverToFile.loadListHistories());
     }
     
     public void run(){
@@ -32,8 +36,8 @@ public class App {
         String operation = "0";
         boolean badOperation;
         
-        List<Reader> listReaders = new ArrayList<>();
-        List<History> listHistories = new ArrayList<>();
+       
+        
         HistoryProvider historyProvider = new HistoryProvider();
         
         do{
@@ -71,6 +75,7 @@ public class App {
                             System.out.println("Читателя добавить не удалось.");
                         }else{
                             listReaders.add(reader);
+                            saverToFile.saveReaders(listReaders);
                             System.out.println("Добавлен новый читатель.");
                         }
                         break;
@@ -81,11 +86,14 @@ public class App {
                             System.out.println("Не удалось выдать книгу.");
                         }else{
                             listHistories.add(history);
+                            saverToFile.saveHistories(listHistories);
                             System.out.println("Книга выдана читателю.");
                         }
                         break; 
                     case "4":
                         historyProvider.returnBook(listHistories);
+                         listHistories.add(history);
+                         saverToFile.saveHistories(listHistories);
                         System.out.println("Книга возвращена в библиотеку");
                         break;
                     case "5":
@@ -95,7 +103,7 @@ public class App {
                         }
                         break;
                     case "6":
-                        System.out.println("---- Список книг ----");
+                        System.out.println("---- Список читателей ----");
                         for(Reader r : listReaders){
                             System.out.println(r.toString());
                         }
